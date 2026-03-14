@@ -1,3 +1,4 @@
+import * as angular from "angular";
 import { IApiResponse, IProject } from "../app.interfaces";
 
 export interface IProjectService {

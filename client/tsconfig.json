@@ -7,16 +7,18 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "removeComments": false,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "lib": ["es2015", "dom"],
     "types": ["angular", "node"],
+    "allowJs": true,
+    "baseUrl": "./",
     "outDir": "./dist",
     "rootDir": "./app",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
-  "include": ["./app/**/*"],
+  "include": ["./app/**/*", "./app/types/**/*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }

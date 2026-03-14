@@ -25,15 +25,7 @@ module.exports = {
       },
       {
         test: /\.html$/,
-        use: [
-          {
-            loader: "html-loader",
-            options: {
-              minimize: true,
-              esModule: false,
-            },
-          },
-        ],
+        use: "html-loader",
       },
     ],
   },
@@ -43,15 +35,24 @@ module.exports = {
       inject: "body",
     }),
     new CopyWebpackPlugin({
-      patterns: [{ from: "src/assets", to: "assets" }],
+      patterns: [{ from: "app/assets", to: "assets" }],
     }),
   ],
   devServer: {
-    static: "./dist",
+    static: {
+      directory: path.join(__dirname, "dist"),
+    },
     port: 8080,
     historyApiFallback: true,
-    proxy: {
-      "/api": "http://localhost:3000",
-    },
+    hot: true,
+    proxy: [
+      {
+        context: ["/api"],
+        target: "http://localhost:3000",
+        changeOrigin: true,
+      },
+    ],
   },
+  devtool: "source-map",
+  mode: "development",
 };

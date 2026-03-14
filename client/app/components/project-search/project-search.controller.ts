@@ -136,7 +136,3 @@ export class ProjectSearchController implements angular.IController {
     return pages;
   }
 }
-
-angular
-  .module("projectSearchApp")
-  .controller("ProjectSearchController", ProjectSearchController);
