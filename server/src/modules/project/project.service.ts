@@ -19,8 +19,9 @@ export class ProjectService {
     limit?: number,
   ): Promise<ProjectPageDto> {
     const queryBuilder = this.projectsRepository.createQueryBuilder('project');
+    queryBuilder.leftJoinAndSelect('project.company', 'company');
+    queryBuilder.leftJoinAndSelect('project.projectArea', 'projectArea');
     if (area) {
-      queryBuilder.leftJoinAndSelect('project.projectArea', 'projectArea');
       queryBuilder.andWhere('projectArea.area = :area', {
         area,
       });

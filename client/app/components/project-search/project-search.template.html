@@ -1,0 +1,206 @@
+<div class="project-search-container">
+  <h2 class="mb-4">Project Search</h2>
+
+  <!-- Search Filters -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row g-3">
+        <!-- Keyword Search -->
+        <div class="col-md-4">
+          <label class="form-label">Keyword</label>
+          <input
+            type="text"
+            class="form-control"
+            ng-model="$ctrl.searchCriteria.keyword"
+            placeholder="Search projects..."
+          />
+          <small class="text-muted">Type to search automatically</small>
+        </div>
+
+        <!-- Area Filter -->
+        <div class="col-md-3">
+          <label class="form-label">Area</label>
+          <select class="form-select" ng-model="$ctrl.searchCriteria.area">
+            <option value="">All Areas</option>
+            <option ng-repeat="area in $ctrl.areas" value="{{area}}">
+              {{area}}
+            </option>
+          </select>
+        </div>
+
+        <!-- Company Filter -->
+        <div class="col-md-3">
+          <label class="form-label">Company</label>
+          <select class="form-select" ng-model="$ctrl.searchCriteria.company">
+            <option value="">All Companies</option>
+            <option ng-repeat="company in $ctrl.companies" value="{{company}}">
+              {{company}}
+            </option>
+          </select>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="col-md-2 d-flex align-items-end">
+          <button
+            class="btn btn-primary w-100 me-2"
+            ng-click="$ctrl.searchProjects()"
+          >
+            Search
+          </button>
+          <button
+            class="btn btn-secondary w-100"
+            ng-click="$ctrl.clearFilters()"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div ng-if="$ctrl.loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div ng-if="$ctrl.error" class="alert alert-danger" role="alert">
+    {{$ctrl.error}}
+  </div>
+
+  <!-- Results -->
+  <div ng-if="!$ctrl.loading && !$ctrl.error">
+    <!-- Results count and per-page selector -->
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <strong>Total Projects: {{$ctrl.totalProjects}}</strong>
+        <span ng-if="$ctrl.projects.length > 0" class="text-muted ms-2">
+          (Showing page {{$ctrl.pagination.currentPage}} of
+          {{$ctrl.pagination.totalPages}})
+        </span>
+      </div>
+      <div class="col-md-6 text-end">
+        <div class="btn-group" role="group">
+          <label class="me-2">Show:</label>
+          <select
+            class="form-select form-select-sm d-inline-block w-auto"
+            ng-model="$ctrl.pagination.itemsPerPage"
+            ng-change="$ctrl.changePageSize()"
+            ng-options="page for page in $ctrl.pageSizeOptions track by page"
+          ></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- No results -->
+    <div ng-if="$ctrl.totalProjects === 0" class="alert alert-info">
+      No projects found matching your criteria.
+    </div>
+
+    <!-- Table View -->
+    <div ng-if="$ctrl.projects.length > 0" class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Project Name</th>
+            <th>Company</th>
+            <th>Area</th>
+            <th>Description</th>
+            <th>Project Value</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="project in $ctrl.projects">
+            <td class="fw-bold">{{project.projectName}}</td>
+            <td>{{project.company}}</td>
+            <td>
+              <span class="badge bg-secondary">{{project.area}}</span>
+            </td>
+            <td>
+              <span ng-if="project.description"
+                >{{project.description | limitTo:
+                50}}{{project.description.length > 50 ? '...' : ''}}</span
+              >
+              <span ng-if="!project.description" class="text-muted fst-italic"
+                >No description</span
+              >
+            </td>
+            <td class="text-end">{{project.projectValue | currency:'£':0}}</td>
+            <td>{{project.projectStart | date:'dd/MM/yyyy'}}</td>
+            <td>{{project.projectEnd | date:'dd/MM/yyyy'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div
+      ng-if="$ctrl.pagination.totalPages > 1"
+      class="d-flex justify-content-between align-items-center mt-3"
+    >
+      <div>
+        <button
+          class="btn btn-sm btn-outline-primary me-2"
+          ng-click="$ctrl.goToPage(1)"
+          ng-disabled="$ctrl.pagination.currentPage === 1"
+        >
+          « First
+        </button>
+        <button
+          class="btn btn-sm btn-outline-primary me-2"
+          ng-click="$ctrl.goToPage($ctrl.pagination.currentPage - 1)"
+          ng-disabled="$ctrl.pagination.currentPage === 1"
+        >
+          ‹ Previous
+        </button>
+      </div>
+
+      <div class="d-flex align-items-center">
+        <span class="me-2">Page</span>
+        <select
+          class="form-select form-select-sm d-inline-block w-auto"
+          ng-model="$ctrl.pagination.currentPage"
+          ng-change="$ctrl.goToPage($ctrl.pagination.currentPage)"
+          ng-options="page for page in $ctrl.getPageNumbers() track by page"
+        ></select>
+        <span class="ms-2">of {{$ctrl.pagination.totalPages}}</span>
+      </div>
+
+      <div>
+        <button
+          class="btn btn-sm btn-outline-primary me-2"
+          ng-click="$ctrl.goToPage($ctrl.pagination.currentPage + 1)"
+          ng-disabled="$ctrl.pagination.currentPage === $ctrl.pagination.totalPages"
+        >
+          Next ›
+        </button>
+        <button
+          class="btn btn-sm btn-outline-primary"
+          ng-click="$ctrl.goToPage($ctrl.pagination.totalPages)"
+          ng-disabled="$ctrl.pagination.currentPage === $ctrl.pagination.totalPages"
+        >
+          Last »
+        </button>
+      </div>
+    </div>
+
+    <!-- Page info for debugging (optional - remove in production) -->
+    <div class="text-muted small mt-2 text-end" ng-if="$ctrl.debug">
+      API call:
+      /api/projects?page={{$ctrl.pagination.currentPage}}&per_page={{$ctrl.pagination.itemsPerPage}}
+      <span ng-if="$ctrl.searchCriteria.area"
+        >&area={{$ctrl.searchCriteria.area}}</span
+      >
+      <span ng-if="$ctrl.searchCriteria.company"
+        >&company={{$ctrl.searchCriteria.company}}</span
+      >
+      <span ng-if="$ctrl.searchCriteria.keyword"
+        >&keyword={{$ctrl.searchCriteria.keyword}}</span
+      >
+    </div>
+  </div>
+</div>
