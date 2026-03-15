@@ -10,4 +10,9 @@ export class ProjectController {
   async findAll(@Query() projectSearchDto: ProjectSearchDto) {
     return await this.projectService.findAll(projectSearchDto);
   }
+
+  @Get('areas')
+  async findAllAreas() {
+    return await this.projectService.findAllAreas();
+  }
 }

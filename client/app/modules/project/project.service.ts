@@ -12,12 +12,19 @@ export class ProjectService {
     private $q: angular.IQService,
     private APP_CONFIG: any,
   ) {
-    this.baseUrl = APP_CONFIG.API_BASE_URL + "/api/projects";
+    this.baseUrl = APP_CONFIG.API_BASE_URL + APP_CONFIG.API_ENDPOINTS.PROJECTS;
   }
 
   getProjects(params: any): angular.IPromise<IApiResponse<IProject>> {
     return this.$http
       .get<IApiResponse<IProject>>(this.baseUrl, { params })
+      .then((response) => response.data)
+      .catch((error) => this.$q.reject(error));
+  }
+
+  getAreas(): angular.IPromise<IApiResponse<string>> {
+    return this.$http
+      .get<IApiResponse<string>>(this.baseUrl + "/areas")
       .then((response) => response.data)
       .catch((error) => this.$q.reject(error));
   }

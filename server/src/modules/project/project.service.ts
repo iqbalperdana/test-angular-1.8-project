@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ProjectArea } from 'src/common/entities/project-area.entity';
 import { Project } from 'src/common/entities/project.entity';
 import { Repository } from 'typeorm';
 import { ProjectPageDto } from './dto/project-page.dto';
 import { ProjectSearchDto } from './dto/project-search.dto';
 import { ProjectViewDto } from './dto/project-view.dto';
-
 @Injectable()
 export class ProjectService {
   constructor(
     @InjectRepository(Project)
     private projectsRepository: Repository<Project>,
+    @InjectRepository(ProjectArea)
+    private projectAreaRepository: Repository<ProjectArea>,
   ) {}
 
   async findAll(projectSearchDto: ProjectSearchDto): Promise<ProjectPageDto> {
@@ -78,6 +80,16 @@ export class ProjectService {
       description: project.description,
       projectValue: project.value,
       area: project.projectArea?.area,
+    };
+  }
+
+  async findAllAreas(): Promise<any> {
+    const areas = await this.projectAreaRepository
+      .createQueryBuilder('projectArea')
+      .select('DISTINCT projectArea.area', 'area')
+      .getRawMany();
+    return {
+      data: areas.map((area: ProjectArea) => area.area),
     };
   }
 }

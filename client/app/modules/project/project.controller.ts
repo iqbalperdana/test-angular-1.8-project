@@ -14,14 +14,8 @@ export class ProjectController implements angular.IController {
   loading: boolean = false;
   error: string | null = null;
   pageSizeOptions: number[] = [5, 10, 25, 50, 100];
-  areas: string[] = [
-    "Manchester",
-    "London",
-    "Birmingham",
-    "Leeds",
-    "Liverpool",
-  ];
-  companies: string[] = ["sss", "ccc", "erw"];
+  areas: string[] = ["test1", "test2", "test3"];
+  companies: string[] = ["test1", "test2", "test3"];
   debug: boolean = true;
 
   pagination: IPaginationState = {
@@ -46,6 +40,7 @@ export class ProjectController implements angular.IController {
 
   $onInit(): void {
     this.getAllCompanies();
+    this.getAreas();
     this.searchProjects();
   }
 
@@ -144,6 +139,25 @@ export class ProjectController implements angular.IController {
       .catch((error: any) => {
         this.error = "Failed to load companies. Please try again.";
         console.error("Error loading companies:", error);
+      })
+      .finally(() => {
+        this.loading = false;
+        this.$scope.$applyAsync();
+      });
+  }
+
+  getAreas(): void {
+    this.loading = true;
+    this.error = null;
+
+    this.ProjectService.getAreas()
+      .then((response: IApiResponse<string>) => {
+        this.areas = response.data;
+        console.log(this.areas);
+      })
+      .catch((error: any) => {
+        this.error = "Failed to load areas. Please try again.";
+        console.error("Error loading areas:", error);
       })
       .finally(() => {
         this.loading = false;
