@@ -2,6 +2,7 @@ export const APP_CONFIG = {
   API_BASE_URL: "http://localhost:3000",
   API_ENDPOINTS: {
     PROJECTS: "/api/projects",
+    COMPANIES: "/api/companies",
   },
   TIMEOUT: 30000,
   DEBUG_MODE: true,

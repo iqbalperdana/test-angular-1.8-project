@@ -1,10 +1,12 @@
 import * as angular from "angular";
 import { IApiResponse, IPaginationState } from "../../app.interfaces";
+import { ICompany } from "../company/company.intefaces";
+import { CompanyService } from "../company/company.service";
 import { IProject, ISearchCriteria } from "./project.intefaces";
 import { ProjectService } from "./project.service";
 
 export class ProjectController implements angular.IController {
-  static $inject = ["ProjectService", "$scope"];
+  static $inject = ["ProjectService", "CompanyService", "$scope"];
 
   searchCriteria: ISearchCriteria;
   projects: IProject[] = [];
@@ -19,11 +21,7 @@ export class ProjectController implements angular.IController {
     "Leeds",
     "Liverpool",
   ];
-  companies: string[] = [
-    "NorthBuild Ltd",
-    "Beacon Infrastructure",
-    "ConstructFirst",
-  ];
+  companies: string[] = ["sss", "ccc", "erw"];
   debug: boolean = true;
 
   pagination: IPaginationState = {
@@ -36,6 +34,7 @@ export class ProjectController implements angular.IController {
 
   constructor(
     private ProjectService: ProjectService,
+    private CompanyService: CompanyService,
     private $scope: angular.IScope,
   ) {
     this.searchCriteria = {
@@ -46,6 +45,7 @@ export class ProjectController implements angular.IController {
   }
 
   $onInit(): void {
+    this.getAllCompanies();
     this.searchProjects();
   }
 
@@ -130,5 +130,24 @@ export class ProjectController implements angular.IController {
       pages.push(i);
     }
     return pages;
+  }
+
+  getAllCompanies(): void {
+    this.loading = true;
+    this.error = null;
+
+    this.CompanyService.getCompanies()
+      .then((response: IApiResponse<ICompany>) => {
+        this.companies = response.data.map((company: ICompany) => company.name);
+        console.log(this.companies);
+      })
+      .catch((error: any) => {
+        this.error = "Failed to load companies. Please try again.";
+        console.error("Error loading companies:", error);
+      })
+      .finally(() => {
+        this.loading = false;
+        this.$scope.$applyAsync();
+      });
   }
 }

@@ -1,10 +1,12 @@
 import * as angular from "angular";
 import "angular-route";
+import { CompanyModule } from "./modules/company/company.module";
 import { ProjectModule } from "./modules/project/project.module";
 
 export const appModule = angular.module("projectSearchApp", [
   "ngRoute",
   ProjectModule,
+  CompanyModule,
 ]);
 
 import { APP_CONFIG } from "./app.constants";

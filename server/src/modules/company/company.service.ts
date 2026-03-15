@@ -10,7 +10,9 @@ export class CompanyService {
     private companyRepository: Repository<Company>,
   ) {}
 
-  async findAll(): Promise<Company[]> {
-    return await this.companyRepository.find();
+  async findAll(): Promise<any> {
+    return {
+      data: await this.companyRepository.find(),
+    };
   }
 }
