@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from 'src/common/entities/project.entity';
 import { Repository } from 'typeorm';
 import { ProjectPageDto } from './dto/project-page.dto';
+import { ProjectSearchDto } from './dto/project-search.dto';
 import { ProjectViewDto } from './dto/project-view.dto';
 
 @Injectable()
@@ -12,36 +13,37 @@ export class ProjectService {
     private projectsRepository: Repository<Project>,
   ) {}
 
-  async findAll(
-    area?: string,
-    keyword?: string,
-    page?: number,
-    limit?: number,
-  ): Promise<ProjectPageDto> {
+  async findAll(projectSearchDto: ProjectSearchDto): Promise<ProjectPageDto> {
     const queryBuilder = this.projectsRepository.createQueryBuilder('project');
     queryBuilder.leftJoinAndSelect('project.company', 'company');
     queryBuilder.leftJoinAndSelect('project.projectArea', 'projectArea');
-    if (area) {
-      queryBuilder.andWhere('projectArea.area = :area', {
-        area,
+
+    if (projectSearchDto.keyword) {
+      queryBuilder.andWhere('project.name LIKE :keyword', {
+        keyword: `%${projectSearchDto.keyword}%`,
       });
     }
-    if (keyword) {
-      queryBuilder.andWhere('project.name LIKE :keyword', {
-        keyword: `%${keyword}%`,
+    if (projectSearchDto.area) {
+      queryBuilder.andWhere('projectArea.area = :area', {
+        area: projectSearchDto.area,
+      });
+    }
+    if (projectSearchDto.company) {
+      queryBuilder.andWhere('company.name = :company', {
+        company: projectSearchDto.company,
       });
     }
 
     const totalItems = await queryBuilder.getCount();
     let totalPages = 1;
 
-    if (page && limit) {
-      totalPages = Math.ceil(totalItems / limit);
-      const skip = (page - 1) * limit;
+    if (projectSearchDto.page && projectSearchDto.perPage) {
+      totalPages = Math.ceil(totalItems / projectSearchDto.perPage);
+      const skip = (projectSearchDto.page - 1) * projectSearchDto.perPage;
 
       const pageProjects = await queryBuilder
         .skip(skip)
-        .take(limit)
+        .take(projectSearchDto.perPage)
         .orderBy('project.id', 'ASC')
         .getMany();
 
@@ -51,8 +53,8 @@ export class ProjectService {
         ),
         pagination: {
           total: totalItems,
-          page: page ?? 1,
-          perPage: limit ?? 10,
+          page: projectSearchDto.page ?? 1,
+          perPage: projectSearchDto.perPage ?? 10,
           totalPages,
         },
       };

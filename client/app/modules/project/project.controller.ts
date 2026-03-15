@@ -1,13 +1,9 @@
 import * as angular from "angular";
-import {
-  IApiResponse,
-  IPaginationState,
-  IProject,
-  ISearchCriteria,
-} from "../../app.interfaces";
-import { ProjectService } from "../../services/project.service";
+import { IApiResponse, IPaginationState } from "../../app.interfaces";
+import { IProject, ISearchCriteria } from "./project.intefaces";
+import { ProjectService } from "./project.service";
 
-export class ProjectSearchController implements angular.IController {
+export class ProjectController implements angular.IController {
   static $inject = ["ProjectService", "$scope"];
 
   searchCriteria: ISearchCriteria;

@@ -1,8 +1,8 @@
 import * as angular from "angular";
-import { IApiResponse, IProject } from "../app.interfaces";
-import { IProjectService } from "./project.service.interfaces";
+import { IApiResponse } from "../../app.interfaces";
+import { IProject } from "./project.intefaces";
 
-export class ProjectService implements IProjectService {
+export class ProjectService {
   static $inject = ["$http", "$q", "APP_CONFIG"];
 
   private baseUrl: string;

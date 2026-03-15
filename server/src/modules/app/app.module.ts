@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as path from 'path';
+import { CompanyModule } from '../company/company.module';
 import { ProjectModule } from '../project/project.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -19,6 +20,7 @@ import { AppService } from './app.service';
       logging: true,
     }),
     ProjectModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

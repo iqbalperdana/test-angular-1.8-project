@@ -1,10 +1,10 @@
 import * as angular from "angular";
 import "angular-route";
-import { ProjectSearchModule } from "./components/project-search/project-search.module";
+import { ProjectModule } from "./modules/project/project.module";
 
 export const appModule = angular.module("projectSearchApp", [
   "ngRoute",
-  ProjectSearchModule,
+  ProjectModule,
 ]);
 
 import { APP_CONFIG } from "./app.constants";
@@ -17,7 +17,7 @@ appModule.config([
   ($routeProvider: angular.route.IRouteProvider) => {
     $routeProvider
       .when("/", {
-        template: "<project-search></project-search>",
+        template: "<project></project>",
       })
       .otherwise({
         redirectTo: "/",
