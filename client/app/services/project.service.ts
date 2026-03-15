@@ -22,3 +22,7 @@ export class ProjectService implements IProjectService {
       .catch((error) => this.$q.reject(error));
   }
 }
+
+export const ProjectServiceModule = angular
+  .module("project.service", [])
+  .service("ProjectService", ProjectService).name;
